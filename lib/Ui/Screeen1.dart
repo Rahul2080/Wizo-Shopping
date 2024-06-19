@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wizoshopping/Bloc/AmazonBloc/amazon_bloc.dart';
+import 'package:wizoshopping/Repsitory/ModelClass/AmazonModel.dart';
 import 'package:wizoshopping/Ui/Screen2.dart';
 
 class Screeen1 extends StatefulWidget {
@@ -11,8 +14,19 @@ class Screeen1 extends StatefulWidget {
 }
 
 class _Screeen1State extends State<Screeen1> {
+  late AmazonModel details;
+
+  @override
+  void initState() {
+    BlocProvider.of<AmazonBloc>(context)
+        .add(AmazonShopEvent(searchKey: '', forAll: true));
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    TextEditingController controller = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -111,6 +125,11 @@ class _Screeen1State extends State<Screeen1> {
                   ),
                 ),
                 child: TextField(
+                  controller: controller,
+                  onSubmitted: (value) {
+                    BlocProvider.of<AmazonBloc>(context).add(AmazonShopEvent(
+                        searchKey: controller.text, forAll: false));
+                  },
                   decoration: InputDecoration(
                     labelText: "search",
                     prefix: Icon(
@@ -441,78 +460,124 @@ class _Screeen1State extends State<Screeen1> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 330.h,
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10.0,
-                physics: NeverScrollableScrollPhysics(),
-                mainAxisSpacing: 10.0,
-                shrinkWrap: true,
-                children: List.generate(
-                  4,
-                  (index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: TextButton(
-                        onPressed: () { Navigator.of(context).push(MaterialPageRoute(builder: (_)=>Screen2())); },
-                        child: Container(
-                          decoration: ShapeDecoration(color:  Colors.black.withOpacity(0.05000000074505806),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                          child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(borderRadius: BorderRadius.circular(20),
-                                  child: Image.asset("assets/shoe.png",)),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: Text(
-                                  'Sneaker',
-                                  style: GoogleFonts.roboto(
-                                    textStyle: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
+            BlocBuilder<AmazonBloc, AmazonState>(builder: (context, state) {
+              if (state is amazonBlocLoading) {
+                return Center(child: CircularProgressIndicator());
+              }
+              if (state is amazonBlocError) {
+                return Center(
+                  child: Text("Error"),
+                );
+              }
+              if (state is amazonBlocLoaded) {
+                details = BlocProvider.of<AmazonBloc>(context).amazonModel;
+                return SizedBox(
+                  height: 140 * details.data!.products!.length.toDouble(),
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 0,
+                    physics: NeverScrollableScrollPhysics(),
+                    mainAxisSpacing: 0,
+                    childAspectRatio: 400 / 540,
+                    shrinkWrap: true,
+                    children: List.generate(
+                      details.data!.products!.length,
+                      (index) {
+                        return TextButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => Screen2(
+                                  img: details
+                                      .data!.products![index].productPhoto
+                                      .toString(),
+                                  txt: details
+                                      .data!.products![index].productTitle
+                                      .toString(),
+                                  price:   details
+                                      .data!.products![index].productPrice
+                                      .toString(),
+
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      '\$100',
-                                      style: GoogleFonts.roboto(
-                                        textStyle: TextStyle(
-                                          color: Color(0xFF8204FF),
-                                          fontSize: 13.sp,
-                                          fontFamily: 'Roboto',
-                                          fontWeight: FontWeight.w400,
-                                        ),
+                            );
+                          },
+                          child: Container(
+                            decoration: ShapeDecoration(
+                              color:
+                                  Colors.black.withOpacity(0.05000000074505806),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                    borderRadius: BorderRadius.circular(30),
+                                    child: SizedBox(
+                                      width: 150.w,
+                                      height: 150.h,
+                                      child: Image.network(
+                                        details
+                                            .data!.products![index].productPhoto
+                                            .toString(),
+                                      ),
+                                    )),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Text(
+                                    details.data!.products![index].productTitle
+                                        .toString(),
+                                    style: GoogleFonts.roboto(
+                                      textStyle: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w400,
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: 69.w,
-                                    ),
-                                    Icon(
-                                      Icons.add_shopping_cart,
-                                      color: Color(0xFF8204FF),
-                                    )
-                                  ],
+                                    maxLines: 1,
+                                  ),
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        details
+                                            .data!.products![index].productPrice
+                                            .toString(),
+                                        style: GoogleFonts.roboto(
+                                          textStyle: TextStyle(
+                                            color: Color(0xFF8204FF),
+                                            fontSize: 13.sp,
+                                            fontFamily: 'Roboto',
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 69.w,
+                                      ),
+                                      Icon(
+                                        Icons.add_shopping_cart,
+                                        color: Color(0xFF8204FF),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              } else {
+                return SizedBox();
+              }
+            }),
           ],
         ),
       ),

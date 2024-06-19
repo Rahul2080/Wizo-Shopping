@@ -1,11 +1,17 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:wizoshopping/Bloc/ProductBloc/product_bloc.dart';
 
 class Screen2 extends StatefulWidget {
-  const Screen2({super.key});
+final String img;
+final String txt;
+final String price;
+// final String product;
+  const Screen2({super.key, required this.img, required this.txt, required this.price, });
 
   @override
   State<Screen2> createState() => _Screen2State();
@@ -13,7 +19,12 @@ class Screen2 extends StatefulWidget {
 
 class _Screen2State extends State<Screen2> {
   int yourActiveIndex = 0;
+@override
+  void initState() {
+BlocProvider.of<ProductBloc>(context).add(FetchProduct(id: ""));
 
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,12 +35,12 @@ class _Screen2State extends State<Screen2> {
             Stack(
               children: [
                 CarouselSlider.builder(
-                  itemCount: 3,
+                  itemCount: widget.img.length,
                   itemBuilder: (BuildContext context, int itemIndex,
                           int pageViewIndex) =>
                       Container(
-                    child: Image.asset(
-                      "assets/shoe.png",
+                    child: Image.network(
+                      widget.img,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -85,7 +96,7 @@ class _Screen2State extends State<Screen2> {
                         Icons.notifications_none,
                         size: 30,
                       ),
-                      SizedBox(width: 10.w),
+                      SizedBox(width: 3.w),
                       Icon(
                         Icons.favorite_border,
                         size: 30,
@@ -94,14 +105,14 @@ class _Screen2State extends State<Screen2> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 322, top: 30),
+                  padding: const EdgeInsets.only(left: 354, top: 38),
                   child: CircleAvatar(
-                    radius: 5.r,
+                    radius: 4.r,
                     backgroundColor: Color(0xFF8204FF),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 370, top: 23),
+                  padding: const EdgeInsets.only(left: 390, top: 28),
                   child: CircleAvatar(
                     radius: 8.r,
                     child: Text(
@@ -124,18 +135,20 @@ class _Screen2State extends State<Screen2> {
                 padding: const EdgeInsets.only(left: 10),
                 child: Row(
                   children: [
-                    Text(
-                      'Headphone',
-                      style: GoogleFonts.roboto(
-                        textStyle: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
+                    SizedBox(width: 230.w,
+                      child: Text(
+                        widget.txt,
+                        style: GoogleFonts.roboto(
+                          textStyle: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),maxLines: 2,
                       ),
                     ),
                     SizedBox(
-                      width: 120.w,
+                      width: 10.w,
                     ),
                     Container(
                       width: 100.w,
@@ -182,7 +195,7 @@ class _Screen2State extends State<Screen2> {
               child: Row(
                 children: [
                   Text(
-                    '\$155 /',
+                    widget.price,
                     style: GoogleFonts.roboto(
                       textStyle: TextStyle(
                         color: Colors.black,
@@ -190,14 +203,14 @@ class _Screen2State extends State<Screen2> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ),
+                  ),SizedBox(width: 5.w,),
                   Text(
                     '\$300',
                     style: GoogleFonts.roboto(
                       textStyle: TextStyle(
                         color: Colors.black,
                         fontSize: 20.sp,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w500,decoration: TextDecoration.lineThrough,decorationThickness: 1.6
                       ),
                     ),
                   ),
@@ -370,8 +383,7 @@ class _Screen2State extends State<Screen2> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 10),
-              child: Text(
-                'Our compact and foldable Bluetooth earbuds are renowned for their lightweight build, offering a \nconvenient and portable solution for audiophiles\n on the go',
+              child: Text("xfxzfh",
                 style: GoogleFonts.roboto(
                   textStyle: TextStyle(
                     color: Color(0xFF414141),
@@ -455,7 +467,7 @@ class _Screen2State extends State<Screen2> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10,top: 20),
+              padding: const EdgeInsets.only(left: 10,top: 20, bottom: 20),
               child: Row(
                 children: [
                   Container(
@@ -517,7 +529,7 @@ class _Screen2State extends State<Screen2> {
                           Icon(
                             Icons.shopping_cart_checkout,
                             color: Colors.white,
-                          ),
+                          ),SizedBox(width: 4.w,),
                           Text(
                             'Buy now',
                             style: GoogleFonts.roboto(
