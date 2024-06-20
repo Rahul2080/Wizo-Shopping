@@ -477,7 +477,6 @@ class _Screeen1State extends State<Screeen1> {
                     crossAxisCount: 2,
                     crossAxisSpacing: 0,
                     physics: NeverScrollableScrollPhysics(),
-                    mainAxisSpacing: 0,
                     childAspectRatio: 400 / 540,
                     shrinkWrap: true,
                     children: List.generate(
@@ -487,16 +486,8 @@ class _Screeen1State extends State<Screeen1> {
                           onPressed: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (_) => Screen2(
-                                  img: details
-                                      .data!.products![index].productPhoto
-                                      .toString(),
-                                  txt: details
-                                      .data!.products![index].productTitle
-                                      .toString(),
-                                  price:   details
-                                      .data!.products![index].productPrice
-                                      .toString(),
+                                builder: (_) => Screen2(id: details.data!.products![index].asin.toString(),
+
 
                                 ),
                               ),

@@ -3,15 +3,15 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:wizoshopping/Repsitory/Api/api_client.dart';
-import 'package:wizoshopping/Repsitory/ModelClass/AmazonModel.dart';
+import 'package:wizoshopping/Repsitory/ModelClass/ProductModel.dart';
 
 
 
-class productApi {
+class ProductApi {
   ApiClient apiClient = ApiClient();
 
 
-  Future<AmazonModel> getproduct(String id) async {
+  Future<ProductModel> getproduct(String id) async {
     String trendingpath = 'https://real-time-amazon-data.p.rapidapi.com/product-details?asin=$id&country=US';
 
     var body = {
@@ -19,6 +19,6 @@ class productApi {
     };
     Response response = await apiClient.invokeAPI(trendingpath, 'GET', body);
 
-    return AmazonModel.fromJson(jsonDecode(response.body));
+    return ProductModel.fromJson(jsonDecode(response.body));
   }
 }

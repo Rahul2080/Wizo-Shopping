@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:wizoshopping/Bloc/AmazonBloc/amazon_bloc.dart';
 import 'package:wizoshopping/Bloc/ProductBloc/product_bloc.dart';
+import 'package:wizoshopping/Bloc/ReviewBloc/review_bloc.dart';
 
 
+import 'Ui/BottamNavigation.dart';
 import 'Ui/Screeen1.dart';
 
 void main() {
@@ -31,6 +33,7 @@ class MyApp extends StatelessWidget {
               BlocProvider(
                 create: (context) => ProductBloc(),
               ),
+              BlocProvider(create: (context) => ReviewBloc())
             ],
             child: MaterialApp(
                 title: 'Flutter Demo',
@@ -54,7 +57,7 @@ class MyApp extends StatelessWidget {
                       seedColor: Colors.deepPurple),
                   useMaterial3: true,
                 ),
-                home: Screeen1()
+                home:Bottamnavigation(),
             ),
           );
         });
