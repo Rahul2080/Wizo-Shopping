@@ -1,8 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:readmore/readmore.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:wizoshopping/Bloc/ProductBloc/product_bloc.dart';
 
@@ -56,35 +58,38 @@ class _Screen2State extends State<Screen2> {
               children: [
                 Stack(
                   children: [
-                    CarouselSlider.builder(
-                      itemCount: data.data!.productPhotos!.length,
-                      itemBuilder: (BuildContext context, int itemIndex,
-                              int pageViewIndex) =>
-                          Container(
-                        child: Image.network(
-                          data.data!.productPhotos![itemIndex].toString(),
-                          fit: BoxFit.cover,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: CarouselSlider.builder(
+                        itemCount: data.data!.productPhotos!.length,
+                        itemBuilder: (BuildContext context, int itemIndex,
+                                int pageViewIndex) =>
+                            Container(
+                          child: Image.network(
+                            data.data!.productPhotos![itemIndex].toString(),
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      options: CarouselOptions(
-                        height: 300.h,
-                        aspectRatio: 16 / 9,
-                        viewportFraction: 1,
-                        initialPage: 0,
-                        enableInfiniteScroll: true,
-                        reverse: false,
-                        onPageChanged: (index, reason) {
-                          setState(() {
-                            yourActiveIndex = index;
-                          });
-                        },
-                        autoPlay: true,
-                        autoPlayInterval: Duration(seconds: 3),
-                        autoPlayAnimationDuration: Duration(milliseconds: 800),
-                        autoPlayCurve: Curves.fastOutSlowIn,
-                        enlargeCenterPage: true,
-                        enlargeFactor: 0.3,
-                        scrollDirection: Axis.horizontal,
+                        options: CarouselOptions(
+                          height: 300.h,
+                          aspectRatio: 16 / 9,
+                          viewportFraction: 1,
+                          initialPage: 0,
+                          enableInfiniteScroll: true,
+                          reverse: false,
+                          onPageChanged: (index, reason) {
+                            setState(() {
+                              yourActiveIndex = index;
+                            });
+                          },
+                          autoPlay: true,
+                          autoPlayInterval: Duration(seconds: 3),
+                          autoPlayAnimationDuration: Duration(milliseconds: 800),
+                          autoPlayCurve: Curves.fastOutSlowIn,
+                          enlargeCenterPage: true,
+                          enlargeFactor: 0.3,
+                          scrollDirection: Axis.horizontal,
+                        ),
                       ),
                     ),
                     Padding(
@@ -161,16 +166,20 @@ class _Screen2State extends State<Screen2> {
                       children: [
                         SizedBox(
                           width: 230.w,
-                          child: Text(
+                          child: ReadMoreText(
                             data.data!.productTitle.toString(),
                             style: GoogleFonts.roboto(
                               textStyle: TextStyle(
                                 color: Colors.black,
-                                fontSize: 20.sp,
+                                fontSize: 15.sp,
                                 fontWeight: FontWeight.w500,
                               ),
-                            ),
-                            maxLines: 2,
+                            ),trimMode: TrimMode.Line,
+                            trimLines: 4,
+                            colorClickableText: Colors.pink,
+                            trimCollapsedText: 'Show more',
+                            trimExpandedText: 'Show less',
+                            moreStyle: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
                           ),
                         ),
                         SizedBox(
@@ -217,7 +226,7 @@ class _Screen2State extends State<Screen2> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 10),
+                  padding: const EdgeInsets.only(left: 10,top: 4),
                   child: Row(
                     children: [
                       Text(
@@ -237,11 +246,11 @@ class _Screen2State extends State<Screen2> {
                         '\$300',
                         style: GoogleFonts.roboto(
                           textStyle: TextStyle(
-                              color: Colors.black,
+                              color: Colors.black38,
                               fontSize: 20.sp,
                               fontWeight: FontWeight.w500,
                               decoration: TextDecoration.lineThrough,
-                              decorationThickness: 1.6),
+                              decorationThickness: 1),
                         ),
                       ),
                     ],
@@ -398,6 +407,7 @@ class _Screen2State extends State<Screen2> {
                     ],
                   ),
                 ),
+
                 Padding(
                   padding: const EdgeInsets.only(left: 10, top: 20),
                   child: Text(
@@ -411,20 +421,33 @@ class _Screen2State extends State<Screen2> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(
-                    data.data!.productDescription.toString(),
-                    style: GoogleFonts.roboto(
-                      textStyle: TextStyle(
-                        color: Color(0xFF414141),
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w400,
-                        height: 1.2,
-                      ),
+
+              Padding(
+                padding: const EdgeInsets.only(left: 10,right: 10),
+                child: ReadMoreText(
+                data.data!.productDescription.toString(),
+                  style: GoogleFonts.roboto(
+                    textStyle: TextStyle(
+                      color: Color(0xFF414141),
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w400,
+                      height: 1.2,
                     ),
                   ),
+                trimMode: TrimMode.Line,
+                trimLines: 4,
+                colorClickableText: Colors.pink,
+                trimCollapsedText: 'Show more',
+                trimExpandedText: 'Show less',
+                moreStyle: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
                 ),
+              ),
+
+
+
+
+
+
                 Padding(
                   padding: const EdgeInsets.only(left: 10, top: 12),
                   child: Text(
@@ -607,18 +630,91 @@ class _Screen2State extends State<Screen2> {
                   if (state is ReviewBlocLoaded) {
                     mode = BlocProvider.of<ReviewBloc>(context).reveiwModel;
                     return SizedBox(
-                      height: 300.h*mode.data!.reviews!.length,
+                      height: 180.h * mode.data!.reviews!.length,
                       child: ListView.separated(
                         physics: NeverScrollableScrollPhysics(),
                         itemBuilder: (context, position) {
                           return Container(
-                            width: 100.w,
-                            color: Colors.white,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Text(mode.data!.reviews![position].reviewComment.toString()),
-                            ),
-                          );
+                              width: 100.w,
+                              color: Colors.white,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 15,top: 8),
+                                      child: Row(
+                                        children: [
+                                          CircleAvatar(
+                                            backgroundImage: NetworkImage(mode
+                                                .data!
+                                                .reviews![position]
+                                                .reviewAuthorAvatar
+                                                .toString()),
+                                            radius: 18.r,
+                                          ),
+                                          SizedBox(
+                                            width: 15.w,
+                                          ),
+                                          Text(mode.data!.reviews![position]
+                                              .reviewAuthor
+                                              .toString())
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 15, top: 4),
+                                      child: RatingBar.builder(
+                                        initialRating: double.parse(mode.data!
+                                            .reviews![position].reviewStarRating
+                                            .toString()),
+                                        minRating: 1,
+                                        direction: Axis.horizontal,
+                                        allowHalfRating: true,
+                                        itemSize: 20,
+                                        itemCount: 5,
+                                        itemPadding:
+                                            EdgeInsets.symmetric(horizontal: 3.0),
+                                        itemBuilder: (context, _) => Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                        ),
+                                        onRatingUpdate: (rating) {},
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 15,top: 5),
+                                      child: Text(
+                                        mode.data!.reviews![position].reviewDate
+                                            .toString(),
+                                        style: GoogleFonts.roboto(
+                                          textStyle: TextStyle(
+                                            color: Color(0xFF8204FF),
+                                            fontSize: 10.sp,
+                                            fontFamily: 'Roboto',
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                                          Padding(
+                                                            padding: const EdgeInsets.only(left: 15),
+                                                            child: ReadMoreText(
+                                                            mode.data!.reviews![position]
+                                  .reviewComment
+                                  .toString(),
+                                                            trimMode: TrimMode.Line,
+                                                            trimLines: 2,
+                                                            colorClickableText: Colors.pink,
+                                                            trimCollapsedText: 'Show more',
+                                                            trimExpandedText: 'Show less',
+                                                            moreStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                                            ),
+                                                          ),
+                                  ],
+                                ),
+                              ));
                         },
                         separatorBuilder: (context, position) {
                           return SizedBox(
